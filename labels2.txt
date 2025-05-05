@@ -1,0 +1,5 @@
+0 Telefono
+1 Television
+2 Ordenador Laptop
+3 Ordenador Torre
+4 Consola

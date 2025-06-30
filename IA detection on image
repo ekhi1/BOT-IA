@@ -27,7 +27,9 @@ async def preparado():
     print(f'We have logged in as {bot.user}')
 
 
-informacion = ["Comandos: (/comandos /ayuda): enseña todos los comandos"]
+informacion = ["Comandos: (/comandos /ayuda): enseña todos los comandos",
+                "Identificar ia: (/identifica): indentifica si la imagen añadida esta creada por ia o es real"]
+
 
 
 @bot.command()

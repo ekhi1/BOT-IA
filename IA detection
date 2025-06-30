@@ -1,0 +1,118 @@
+import discord
+import random
+from discord.ext import commands
+
+import requests
+import os
+
+import nest_asyncio
+import asyncio
+
+nest_asyncio.apply()
+
+from keras.models import load_model
+from PIL import Image, ImageOps
+import numpy as np
+
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+
+bot = commands.Bot(command_prefix='/', intents=intents)
+
+
+@bot.event
+async def preparado():
+    print(f'We have logged in as {bot.user}')
+
+
+informacion = ["Comandos: (/comandos /ayuda): enseña todos los comandos"]
+
+
+@bot.command()
+async def comandos(ctx):
+    print(ctx)
+    for i in range(len(informacion)):
+        await ctx.send(informacion[i])
+
+
+@bot.command()
+async def ayuda(ctx):
+    for i in range(len(informacion)):
+        await ctx.send(informacion[i])
+
+
+def identificar(model_path, labels_path, image_path):
+
+    # Disable scientific notation for clarity
+    np.set_printoptions(suppress=True)
+
+    # Load the model
+    model = load_model(model_path, compile=False)
+
+    # Load the labels
+    class_names = open(labels_path, "r").readlines()
+
+    # Create the array of the right shape to feed into the keras model
+    # The 'length' or number of images you can put into the array is
+    # determined by the first position in the shape tuple, in this case 1
+    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
+
+    # Replace this with the path to your image
+    image = Image.open(image_path).convert("RGB")
+
+    # resizing the image to be at least 224x224 and then cropping from the center
+    size = (224, 224)
+    image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+
+    # turn the image into a numpy array
+    image_array = np.asarray(image)
+
+    # Normalize the image
+    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
+
+    # Load the image into the array
+    data[0] = normalized_image_array
+
+    # Predicts the model
+    prediction = model.predict(data)
+    index = np.argmax(prediction)
+    class_name = class_names[index]
+    confidence_score = prediction[0][index]
+
+    # Print prediction and confidence score
+    result = []
+    for i in range(len(class_names)):
+        result.append(class_names[i][2:-1]+':'+str(np.round(prediction[0][i],3)))
+
+
+    final_result = ["Class: "+ class_name[2:], "Confidence Score: "+str(np.round(confidence_score, 3))]
+
+
+    return result, final_result
+
+
+@bot.command()
+async def identifica(ctx):
+    if ctx.message.attachments:
+        for attachments in ctx.message.attachments:
+            file_name = attachments.filename
+            if os.path.isfile("./image"):
+                os.remove("./image")
+            os.makedirs("./image", exist_ok=True)
+            image_path = f"./image/{file_name}"
+            file_url = attachments.url
+            await attachments.save(f"./image/{file_name}")
+            result, final_result = identificar(r"C:\Users\ekhir\Downloads\Programacion\Python\activities\modulo 10\Actividad final\keras_model.h5", r"C:\Users\ekhir\Downloads\Programacion\Python\activities\modulo 10\Actividad final\labels.txt", image_path)
+            for i in range(len(result)):
+                await ctx.send(result[i])
+
+            await ctx.send("Predicción final: ")
+            await ctx.send(final_result[0])
+            await ctx.send(final_result[1])
+
+    else:
+        await ctx.send("Olvidaste adjuntar la imagen :(")
+
+bot.run("TOKEN")

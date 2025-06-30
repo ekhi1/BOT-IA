@@ -28,7 +28,8 @@ async def preparado():
 
 
 informacion = ["Comandos: (/comandos /ayuda): enseña todos los comandos",
-                "Identificar ia: (/identifica): indentifica si la imagen añadida esta contaminada o es ecologica/netural"]
+                "Identificar contaminacion: (/identifica): indentifica si la imagen añadida esta contaminada o es ecologica/netural",
+                "Aconsejar: (/consejo): te da un consejo eecologico"]
 
 
 
@@ -116,5 +117,24 @@ async def identifica(ctx):
 
     else:
         await ctx.send("Olvidaste adjuntar la imagen :(")
+
+consejos = [
+    "Apaga lo que no uses. Luces, pantallas, enchufes… todo suma energía innecesaria si se queda encendido.",
+    "Lleva tu propia botella reutilizable. Evitas toneladas de plástico a lo largo del año con este simple hábito.",
+    "Camina, pedalea o usa transporte público. Menos autos = menos emisiones y más salud.",
+    "Compra solo lo que necesitas. Menos consumo reduce residuos, contaminación y uso de recursos.",
+    "Recicla correctamente. Aprende qué va en cada contenedor y separa tus residuos siempre.",
+    "Evita productos con mucho embalaje. Elige productos a granel o con envases reutilizables/reciclables.",
+    "Come más vegetal y menos carne roja. La ganadería industrial es una de las mayores fuentes de gases de efecto invernadero.",
+    "Reutiliza objetos antes de desecharlos. Frascos, bolsas, ropa vieja… dales una segunda vida.",
+    "Desconecta aparatos que no usas (no solo apagues). Muchos consumen energía en “modo espera”.",
+    "Informa y comparte estos hábitos. El cambio real ocurre cuando más personas se suman, y tú puedes inspirarlas.",
+]
+
+@bot.command()
+async def consejo(ctx):
+    x = random.randint(0, 10)
+    print(x)
+    await ctx.send(consejos[x - 1])
 
 bot.run("TOKEN")

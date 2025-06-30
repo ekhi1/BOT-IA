@@ -106,7 +106,7 @@ async def identifica(ctx):
             image_path = f"./image/{file_name}"
             file_url = attachments.url
             await attachments.save(f"./image/{file_name}")
-            result, final_result = identificar(r"C:\Users\ekhir\Downloads\Programacion\Python\activities\modulo 10\Actividad final\keras_model.h5", r"C:\Users\ekhir\Downloads\Programacion\Python\activities\modulo 10\Actividad final\labels.txt", image_path)
+            result, final_result = identificar(r"model path", r"labels path", image_path)
             for i in range(len(result)):
                 await ctx.send(result[i])
 
